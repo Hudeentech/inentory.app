@@ -1,0 +1,95 @@
+[
+  {
+    "name": "powder",
+    "stockQuantity": 33,
+    "price": 4500,
+    "priceTag": 5000,
+    "id": "50e5e024-050d-43ea-b49a-cb52f60ad66f",
+    "dateAdded": "2024-12-16T15:19:20.691Z",
+    "dateUpdated": "2024-12-16T16:00:09.744Z",
+    "sales": [
+      {
+        "saleId": "3fce66a5-6d0a-4657-a2ea-05fa9039bab0",
+        "saleDate": "2024-12-16T15:27:21.720Z",
+        "quantitySold": 20,
+        "price": 5500
+      },
+      {
+        "saleId": "64a29c66-a547-480b-a0c3-2d456723a57e",
+        "saleDate": "2024-12-16T16:01:37.218Z",
+        "quantitySold": 5,
+        "price": 7000
+      }
+    ]
+  },
+  {
+    "name": "Foundation",
+    "stockQuantity": 0,
+    "price": 5500,
+    "priceTag": 6000,
+    "id": "6437ac60-fbc1-4927-8e75-853d0cf6cfee",
+    "dateAdded": "2024-12-16T15:20:13.522Z",
+    "sales": [
+      {
+        "saleId": "ed5a29f3-8446-42e9-b458-dcde5b7ab167",
+        "saleDate": "2024-12-16T16:02:46.026Z",
+        "quantitySold": 24,
+        "price": 10000
+      }
+    ]
+  },
+  {
+    "name": "Davis Eyebrow Pencil",
+    "stockQuantity": 2,
+    "price": 8500,
+    "priceTag": 10500,
+    "id": "b26177e3-a6ed-4e4e-9f89-1b2e0979c068",
+    "dateAdded": "2024-12-16T15:22:32.720Z",
+    "sales": [
+      {
+        "saleId": "ff619313-8e9a-4b02-942c-3133651538b3",
+        "saleDate": "2024-12-16T15:49:24.915Z",
+        "quantitySold": 30,
+        "price": 200
+      },
+      {
+        "saleId": "791c9553-7085-4ca6-b9c3-fafaa4d708e0",
+        "saleDate": "2024-12-16T16:04:26.000Z",
+        "quantitySold": 4,
+        "price": 8000
+      }
+    ]
+  },
+  {
+    "name": "Body Lotion",
+    "stockQuantity": 0,
+    "price": 9000,
+    "priceTag": 13500,
+    "id": "3971eae5-f5b9-4be4-a42d-184ee07f4390",
+    "dateAdded": "2024-12-16T15:23:19.248Z",
+    "sales": [
+      {
+        "saleId": "16c02a2a-46b4-4467-b0be-9fba2f5626d2",
+        "saleDate": "2024-12-16T15:48:31.106Z",
+        "quantitySold": 2,
+        "price": 34
+      }
+    ]
+  },
+  {
+    "name": "Influencers Light",
+    "stockQuantity": 1,
+    "price": 18000,
+    "priceTag": 21000,
+    "id": "02b616d2-068f-46c8-a256-ecbf3f2e0976",
+    "dateAdded": "2024-12-16T15:24:14.926Z"
+  },
+  {
+    "name": "baby oil",
+    "stockQuantity": 11,
+    "price": 200,
+    "priceTag": 400,
+    "id": "fb992b24-98d0-42af-a9bf-0df9054dd584",
+    "dateAdded": "2024-12-16T15:58:41.388Z"
+  }
+]
