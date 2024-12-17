@@ -28,7 +28,7 @@ const Dashboard = ( ) => {
   // Fetch inventory data
   const fetchInventoryData = async () => {
     try {
-      const response = await fetch("http://localhost:3000/inventory");
+      const response = await fetch('https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory');
       if (response.ok) {
         const data = await response.json();
         setInventoryData(data);
@@ -42,7 +42,7 @@ const Dashboard = ( ) => {
 
   useEffect(() => {
     fetchInventoryData(); // Initial fetch
-    const intervalId = setInterval(fetchInventoryData, 5000); // Refresh every 5 seconds
+    const intervalId = setInterval(fetchInventoryData, 3000); // Refresh every 5 seconds
     return () => clearInterval(intervalId); // Cleanup interval
   }, []);
 

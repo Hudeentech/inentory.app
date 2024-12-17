@@ -18,7 +18,7 @@ const ItemForm = () => {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const response = await fetch("http://localhost:3000/inventory");
+        const response = await fetch("https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory");
         if (response.ok) {
           const data = await response.json();
           setInventory(data);
@@ -55,7 +55,7 @@ const ItemForm = () => {
           stockQuantity: existingItem.stockQuantity + newQuantity,
         };
   
-        const response = await fetch(`http://localhost:3000/inventory/${existingItem.id}`, {
+        const response = await fetch(`https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory/${existingItem.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedItem),
@@ -83,7 +83,7 @@ const ItemForm = () => {
           priceTag: parseFloat(formData.priceTag),
         };
   
-        const response = await fetch("http://localhost:3000/inventory", {
+        const response = await fetch("https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newItem),
@@ -129,7 +129,7 @@ const ItemForm = () => {
 
   const handleDelete = async (itemId) => {
     try {
-      const response = await fetch(`http://localhost:3000/inventory/${itemId}`, {
+      const response = await fetch(`https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory/${itemId}`, {
         method: "DELETE",
       });
 

@@ -12,7 +12,7 @@ const App = () => {
     useEffect(() => {
         const fetchInventory = async () => {
             try {
-                const response = await fetch("http://localhost:3000/inventory");
+                const response = await fetch("https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory");
                 if (response.ok) {
                     const data = await response.json();
                     setInventory(data || []); // Set inventory data or fallback to empty array
@@ -53,7 +53,7 @@ const App = () => {
         if (item.id) {
             // Update existing item using PATCH
             try {
-                const response = await fetch(`http://localhost:3000/inventory/${item.id}`, {
+                const response = await fetch(`https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory/${item.id}`, {
                     method: "PATCH",  // Changed to PATCH for partial updates
                     headers: {
                         "Content-Type": "application/json",
@@ -78,7 +78,7 @@ const App = () => {
         } else {
             // Add new item (POST)
             try {
-                const response = await fetch("http://localhost:3000/inventory", {
+                const response = await fetch("https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -108,7 +108,7 @@ const App = () => {
     // Remove an item from the inventory
     const handleDeleteItem = async (id) => {
         try {
-            const response = await fetch(`http://localhost:3000/inventory/${id}`, {
+            const response = await fetch(`https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory/${id}`, {
                 method: "DELETE",
             });
 

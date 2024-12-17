@@ -1,44 +1,5 @@
 [
   {
-    "name": "powder",
-    "stockQuantity": 33,
-    "price": 4500,
-    "priceTag": 5000,
-    "id": "50e5e024-050d-43ea-b49a-cb52f60ad66f",
-    "dateAdded": "2024-12-16T15:19:20.691Z",
-    "dateUpdated": "2024-12-16T16:00:09.744Z",
-    "sales": [
-      {
-        "saleId": "3fce66a5-6d0a-4657-a2ea-05fa9039bab0",
-        "saleDate": "2024-12-16T15:27:21.720Z",
-        "quantitySold": 20,
-        "price": 5500
-      },
-      {
-        "saleId": "64a29c66-a547-480b-a0c3-2d456723a57e",
-        "saleDate": "2024-12-16T16:01:37.218Z",
-        "quantitySold": 5,
-        "price": 7000
-      }
-    ]
-  },
-  {
-    "name": "Foundation",
-    "stockQuantity": 0,
-    "price": 5500,
-    "priceTag": 6000,
-    "id": "6437ac60-fbc1-4927-8e75-853d0cf6cfee",
-    "dateAdded": "2024-12-16T15:20:13.522Z",
-    "sales": [
-      {
-        "saleId": "ed5a29f3-8446-42e9-b458-dcde5b7ab167",
-        "saleDate": "2024-12-16T16:02:46.026Z",
-        "quantitySold": 24,
-        "price": 10000
-      }
-    ]
-  },
-  {
     "name": "Davis Eyebrow Pencil",
     "stockQuantity": 2,
     "price": 8500,
@@ -91,5 +52,13 @@
     "priceTag": 400,
     "id": "fb992b24-98d0-42af-a9bf-0df9054dd584",
     "dateAdded": "2024-12-16T15:58:41.388Z"
+  },
+  {
+    "id": "8d7e81f4-bcbc-42c8-b89f-5e4dd58bf8d4",
+    "name": "SSSD",
+    "stockQuantity": 2,
+    "price": 41,
+    "dateAdded": "2024-12-17T07:45:23.043Z",
+    "sales": []
   }
 ]
