@@ -16,7 +16,7 @@ const SalesForm = () => {
   // Fetch inventory data from the server
   const fetchInventory = async () => {
     try {
-      const response = await fetch("http://localhost:5173/inventory");
+      const response = await fetch("https://inentory-app.vercel.app/inventory");
       if (response.ok) {
         const data = await response.json();
         setInventory(data);
@@ -70,7 +70,7 @@ const SalesForm = () => {
         price: parseFloat(salesData.priceSold),
       };
 
-      const response = await fetch("http://localhost:5173/inventory/sales", {
+      const response = await fetch("https://inentory-app.vercel.app/inventory/sales", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
