@@ -28,7 +28,7 @@ const Dashboard = ( ) => {
   // Fetch inventory data
   const fetchInventoryData = async () => {
     try {
-      const response = await fetch('https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory');
+      const response = await fetch('https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app');
       if (response.ok) {
         const data = await response.json();
         setInventoryData(data);

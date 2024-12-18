@@ -8,7 +8,7 @@ export default defineConfig({
     proxy:{
       '/inventory':{
         target:
-        'https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app/inventory',
+        'https://inventory-hudeentech-hudeens-projects-c7c7e208.vercel.app',
         changeOrigin:true,
       }
     }

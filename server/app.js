@@ -10,7 +10,9 @@ const PORT = process.env.PORT || 3000; // Allow for dynamic ports (e.g., in depl
 const dbFilePath = path.join(__dirname, 'inventory.json');
 
 // Enable CORS for all origins
-app.use(cors({origin:'https://myniventory.netlify.app'}));
+var whitelist = ["http://localhost:5173", "https://hudeeninventory.netlify.app"];
+var corsOptions = { origin: whitelist, credentials: true };
+app.use(cors(corsOptions));
 
 // Middleware to parse JSON data
 app.use(express.json());
