@@ -38,7 +38,11 @@ body {
   grid-area: header;
   color: white;
   min-width: 300px;
+<<<<<<< HEAD
   margin: 1em auto;
+=======
+  margin:0 auto;
+>>>>>>> 29c565d (completed)
   height: fit-content;
   border-radius: 50px;
   background: #1c1c1c;
