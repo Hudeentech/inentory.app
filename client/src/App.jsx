@@ -8,7 +8,7 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingItem, setEditingItem] = useState(null);
 
-  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
+  const { sendJsonMessage } = useWebSocket("ws://inentory-app.vercel.app/ws", {
     onMessage: (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "inventory_update") {
@@ -23,7 +23,7 @@ const App = () => {
 
   const fetchInventory = async () => {
     try {
-      const response = await fetch("http://localhost:3000/inventory");
+      const response = await fetch("https://inentory-app.vercel.app/inventory");
       if (response.ok) {
         const data = await response.json();
         setInventory(data || []);
@@ -57,8 +57,8 @@ const App = () => {
 
   const handleSaveItem = async (item) => {
     const url = item.id
-      ? `http://localhost:3000/inventory/${item.id}`
-      : "http://localhost:3000/inventory";
+      ? `https://inentory-app.vercel.app/inventory/${item.id}`
+      : "https://inentory-app.vercel.app/inventory";
     const method = item.id ? "PATCH" : "POST";
 
     try {
@@ -83,7 +83,7 @@ const App = () => {
 
   const handleDeleteItem = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3000/inventory/${id}`, {
+      const response = await fetch(`https://inentory-app.vercel.app/inventory/${id}`, {
         method: "DELETE",
       });
 

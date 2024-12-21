@@ -15,7 +15,7 @@ const SalesForm = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const BASE_URL = "http://localhost:3000";
+  const BASE_URL = "https://inentory-app.vercel.app";
 
   // Fetch inventory
   const fetchInventory = async () => {
@@ -120,6 +120,7 @@ const SalesForm = () => {
   return (
     <div className="form-section">
       <form className="form-group" id="salesForm" onSubmit={handleSubmit}>
+     <h1>   Record Sales</h1>
         <div className="fields">
           <div>
             <p className="label">Item Name</p>

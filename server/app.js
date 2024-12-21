@@ -9,6 +9,11 @@ const http = require('http');
 const app = express();
 const PORT = 3000;
 
+const cors = require("cors");
+var whitelist = ["http://localhost:5173", "https://hudeeninventory.netlify.app"];
+var corsOptions = { origin: whitelist, credentials: true };
+app.use(cors(corsOptions));
+
 // Set up the HTTP server
 const server = http.createServer(app);
 

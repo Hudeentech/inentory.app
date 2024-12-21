@@ -8,7 +8,7 @@ export default defineConfig({
     proxy:{
       '/inventory':{
         target:
-        'http://localhost:3000',
+        ['http://localhost:3000', 'https://inentory-app.vercel.app'],
         changeOrigin:true,
       }
     }

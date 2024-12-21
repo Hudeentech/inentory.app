@@ -10,7 +10,7 @@ const Store = () => {
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [showPopUp, setShowPopUp] = useState(false);
 
-  const BASE_URL = "http://localhost:3000";
+  const BASE_URL = "https://inentory-app.vercel.app";
 
   // Fetch items from the API
   const fetchItems = async () => {
@@ -97,7 +97,7 @@ const Store = () => {
   return (
     <div className="store-container">
       <div className="store-head">
-        <h1 className="store-title">Available Items</h1>
+        <h1>Items Store</h1>
         <Header onSearch={handleSearch} />
         {feedbackMessage && showPopUp && (
           <PopUp

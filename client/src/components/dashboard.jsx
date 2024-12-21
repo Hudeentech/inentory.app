@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import InventoryPage from "./InventoryPage"; // Adjust the path if necessary
 
+const api ='https://inentory-app.vercel.app'
+
 const AnalysisCard = ({ id, value, label, unit, icon, subLabel }) => (
   <div className="analysis">
     <h1 id={id}>
@@ -32,7 +34,7 @@ const Dashboard = () => {
 
   const fetchInventoryData = async () => {
     try {
-      const response = await fetch("http://localhost:3000/inventory");
+      const response = await fetch(`${api}/inventory`);
       if (response.ok) {
         const data = await response.json();
         setInventoryData(data);

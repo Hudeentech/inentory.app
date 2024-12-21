@@ -3,7 +3,7 @@ import PopUp from "./PopUp";
 import InventoryPage from "./InventoryPage";
 import useWebSocket from "react-use-websocket";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://inentory-app.vercel.app";
 
 const ItemForm = () => {
   const [formData, setFormData] = useState({
@@ -170,6 +170,7 @@ const ItemForm = () => {
   return (
     <>
       <form className="form-group" id="itemForm" onSubmit={handleSubmit}>
+      <h1>Restock</h1>
         <div className="fields">
           <div>
             <p className="label">Item Name</p>
