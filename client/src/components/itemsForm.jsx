@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import InventoryPage from "./InventoryPage";
 import PopUp from "./PopUp";
+import InventoryPage from "./InventoryPage";
+import useWebSocket from "react-use-websocket";
+
+const BASE_URL = "http://localhost:3000";
 
 const ItemForm = () => {
   const [formData, setFormData] = useState({
@@ -12,100 +15,121 @@ const ItemForm = () => {
   });
   const [inventory, setInventory] = useState([]);
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackType, setFeedbackType] = useState(""); // Type of message (success/error)
   const [showPopUp, setShowPopUp] = useState(false);
 
-  // Fetch inventory data
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const response = await fetch("https://inentory-app.vercel.app/inventory");
-        if (response.ok) {
-          const data = await response.json();
-          setInventory(data);
-        } else {
-          console.error("Failed to fetch inventory:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching inventory:", error);
+  // WebSocket setup
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket(
+    "ws://localhost:3000", // Replace with your WebSocket server URL
+    {
+      shouldReconnect: () => true, // Automatically reconnect on disconnection
+    }
+  );
+
+  // Fetch inventory on load
+  const fetchInventory = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/inventory`);
+      if (response.ok) {
+        const data = await response.json();
+        setInventory(data);
+        await fetchInventory();
+      } else {
+        setFeedbackMessage("Failed to fetch inventory.");
+        setFeedbackType("error");
+        setShowPopUp(true);
       }
-    };
+    } catch (error) {
+      setFeedbackMessage("Error fetching inventory.");
+      setFeedbackType("error");
+      setShowPopUp(true);
+    }
+  };
+
+  useEffect(() => {
     fetchInventory();
   }, []);
 
+  // Listen for WebSocket messages
+  useEffect(() => {
+    if (lastJsonMessage) {
+      const { type, data } = lastJsonMessage;
+
+      if (type === "inventoryUpdate") {
+        setInventory((prev) =>
+          prev.some((item) => item._id === data._id)
+            ? prev.map((item) =>
+                item._id === data._id ? data : item
+              )
+            : [...prev, data]
+        );
+      } else if (type === "inventoryDelete") {
+        setInventory((prev) =>
+          prev.filter((item) => item._id !== data._id)
+        );
+      }
+    }
+  }, [lastJsonMessage]);
+
+  // Handle form input changes
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
   };
 
+  // Submit form data
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const newQuantity = parseInt(formData.itemQuantity);
-  
+    const { itemName, itemQuantity, itemPricePerUnit, priceTag } = formData;
+    const newQuantity = parseInt(itemQuantity);
+
     try {
-      // Check if item already exists in the inventory
       const existingItem = inventory.find(
-        (item) => item.name.toLowerCase() === formData.itemName.toLowerCase()
+        (item) => item.name.toLowerCase() === itemName.toLowerCase()
       );
-  
+
       if (existingItem) {
-        // Increment the stock quantity of the existing item
         const updatedItem = {
-          ...existingItem,
-          stockQuantity: existingItem.stockQuantity + newQuantity,
+          stockQuantity: newQuantity + existingItem.stockQuantity,
+          price: parseFloat(itemPricePerUnit),
+          priceTag: parseFloat(priceTag),
         };
-  
-        const response = await fetch(`https://inentory-app.vercel.app/inventory/${existingItem.id}`, {
+
+        await fetch(`${BASE_URL}/inventory/${existingItem._id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedItem),
         });
-  
-        if (response.ok) {
-          const updatedItemResponse = await response.json();
-          setInventory((prevInventory) =>
-            prevInventory.map((item) =>
-              item.id === updatedItemResponse.id ? updatedItemResponse : item
-            )
-          );
-          setFeedbackMessage(
-            `Stock for "${updatedItemResponse.name}" updated successfully! New quantity: ${updatedItemResponse.stockQuantity}`
-          );
-        } else {
-          setFeedbackMessage("Error updating stock. Please try again.");
-        }
+        await fetchInventory();
+        setFeedbackMessage(`Stock for "${itemName}" updated!`);
+        setFeedbackType("success");
       } else {
-        // Create new item if it doesn't exist
         const newItem = {
-          name: formData.itemName,
+          name: itemName,
           stockQuantity: newQuantity,
-          price: parseFloat(formData.itemPricePerUnit),
-          priceTag: parseFloat(formData.priceTag),
+          price: parseFloat(itemPricePerUnit),
+          priceTag: parseFloat(priceTag),
         };
-  
-        const response = await fetch("https://inentory-app.vercel.app/inventory", {
+
+        await fetch(`${BASE_URL}/inventory`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newItem),
         });
-  
-        if (response.ok) {
-          const addedItem = await response.json();
-          setInventory((prevInventory) => [...prevInventory, addedItem]);
-          setFeedbackMessage(`Item "${addedItem.name}" added successfully!`);
-        } else {
-          setFeedbackMessage("Error adding item. Please try again.");
-        }
+
+        setFeedbackMessage(`Item "${itemName}" added successfully!`);
+        setFeedbackType("success");
       }
     } catch (error) {
       setFeedbackMessage("An error occurred while processing your request.");
+      setFeedbackType("error");
     }
-  
+
     setShowPopUp(true);
     resetForm();
   };
-  
 
+  // Reset form fields
   const resetForm = () => {
     setFormData({
       id: null,
@@ -116,10 +140,10 @@ const ItemForm = () => {
     });
   };
 
+  // Edit existing item
   const handleEditItem = (item) => {
-    // Populate form with item details for editing
     setFormData({
-      id: item.id,
+      id: item._id,
       itemName: item.name,
       itemQuantity: item.stockQuantity.toString(),
       itemPricePerUnit: item.price.toString(),
@@ -127,24 +151,18 @@ const ItemForm = () => {
     });
   };
 
+  // Delete inventory item
   const handleDelete = async (itemId) => {
     try {
-      const response = await fetch(`https://inentory-app.vercel.app/inventory${itemId}`, {
+      await fetch(`${BASE_URL}/inventory/${itemId}`, {
         method: "DELETE",
       });
-
-      if (response.ok) {
-        setInventory((prevInventory) =>
-          prevInventory.filter((item) => item.id !== itemId)
-        );
-        setFeedbackMessage("Item deleted successfully.");
-        setShowPopUp(true);
-      } else {
-        setFeedbackMessage("Error deleting item. Please try again.");
-        setShowPopUp(true);
-      }
+      setFeedbackMessage("Item deleted successfully.");
+      setFeedbackType("success");
+      setShowPopUp(true);
     } catch (error) {
       setFeedbackMessage("An error occurred while deleting the item.");
+      setFeedbackType("error");
       setShowPopUp(true);
     }
   };
@@ -164,7 +182,6 @@ const ItemForm = () => {
               required
             />
           </div>
-
           <div>
             <p className="label">Restocked Quantity</p>
             <input
@@ -176,43 +193,44 @@ const ItemForm = () => {
               required
             />
           </div>
-
           <div>
-            <p className="label">Cost of Goods</p>
+            <p className="label">Price per Unit</p>
             <input
               type="number"
               id="itemPricePerUnit"
               value={formData.itemPricePerUnit}
               onChange={handleChange}
-              placeholder="Item Price Per Unit"
+              placeholder="Price per unit"
               required
             />
           </div>
-
           <div>
-            <p className="label">Selling price</p>
+            <p className="label">Price Tag</p>
             <input
               type="number"
               id="priceTag"
               value={formData.priceTag}
               onChange={handleChange}
-              placeholder="Price Tag (Per Item)"
+              placeholder="Set price tag"
               required
             />
           </div>
         </div>
-
-        <button className="btn" type="submit">
-          {formData.id ? "Update Item" : "Add Item"}
-        </button>
+        <div className="actions">
+          <button className="btn">Submit</button>
+        </div>
       </form>
-
-      {showPopUp && <PopUp message={feedbackMessage} onClose={() => setShowPopUp(false)} />}
+      {showPopUp && (
+        <PopUp
+          message={feedbackMessage}
+          type={feedbackType}
+          onClose={() => setShowPopUp(false)}
+        />
+      )}
       <InventoryPage
         inventory={inventory}
-        onEditItem={handleEditItem}
-        onDelete={handleDelete}
-        hideActions={false}
+        handleEditItem={handleEditItem}
+        handleDelete={handleDelete}
       />
     </>
   );

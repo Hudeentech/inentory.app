@@ -4,16 +4,21 @@ import InventoryPage from "./InventoryPage"; // Adjust the path if necessary
 const AnalysisCard = ({ id, value, label, unit, icon, subLabel }) => (
   <div className="analysis">
     <h1 id={id}>
-      {value}
       {unit && <span>{unit}</span>}
+      {value}
     </h1>
     <h4>{label}</h4>
-    {subLabel && <em><i className="fas fa-exclamation-circle"></i>{subLabel}</em>} {/* Display additional info */}
+    {subLabel && (
+      <em>
+        <i className="fas fa-exclamation-circle"></i>
+        {subLabel}
+      </em>
+    )}
     <i className={`fas ${icon}`}></i>
   </div>
 );
 
-const Dashboard = ( ) => {
+const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
     profit: { value: 0, label: "Total Profit", unit: "NGN", icon: "fa-coins", subLabel: "" },
     itemsSold: { value: 0, label: "Items Sold", icon: "fa-shopping-cart", subLabel: "" },
@@ -23,12 +28,11 @@ const Dashboard = ( ) => {
   });
 
   const [inventoryData, setInventoryData] = useState([]);
-  const [filter, setFilter] = useState("all"); // Filter state for time period (day, week, month, year)
+  const [filter, setFilter] = useState("all");
 
-  // Fetch inventory data
   const fetchInventoryData = async () => {
     try {
-      const response = await fetch('https://inentory-app.vercel.app/inventory');
+      const response = await fetch("http://localhost:3000/inventory");
       if (response.ok) {
         const data = await response.json();
         setInventoryData(data);
@@ -41,12 +45,11 @@ const Dashboard = ( ) => {
   };
 
   useEffect(() => {
-    fetchInventoryData(); // Initial fetch
-    const intervalId = setInterval(fetchInventoryData, 3000); // Refresh every 5 seconds
-    return () => clearInterval(intervalId); // Cleanup interval
+    fetchInventoryData();
+    const intervalId = setInterval(fetchInventoryData, 5000);
+    return () => clearInterval(intervalId);
   }, []);
 
-  // Filter sales based on selected time period
   const filterSalesByDate = (sales, filter) => {
     const now = new Date();
     return sales.filter((sale) => {
@@ -55,7 +58,7 @@ const Dashboard = ( ) => {
         case "day":
           return saleDate.toDateString() === now.toDateString();
         case "week":
-          const startOfWeek = now.getDate() - now.getDay(); // Get start of the week (Sunday)
+          const startOfWeek = now.getDate() - now.getDay();
           const weekStartDate = new Date(now.setDate(startOfWeek));
           return saleDate >= weekStartDate;
         case "month":
@@ -63,7 +66,7 @@ const Dashboard = ( ) => {
         case "year":
           return saleDate.getFullYear() === now.getFullYear();
         default:
-          return true; // No filtering (show all data)
+          return true;
       }
     });
   };
@@ -74,34 +77,35 @@ const Dashboard = ( ) => {
     let totalSold = 0;
     let totalProfit = 0;
     let itemsToRestock = 0;
-    let subLabelProfit = ""; // Additional text for profit
-    let subLabelItemsSold = ""; // Additional text for items sold
+    let subLabelProfit = "";
+    let subLabelItemsSold = "";
 
     inventoryData.forEach((item) => {
       const stockQuantity = item.stockQuantity || 0;
       const pricePerUnit = item.priceTag || 0;
 
-      totalStocked += stockQuantity; // Total items stocked
-      itemsRemaining += stockQuantity; // Add initial stock to remaining
+      totalStocked += stockQuantity;
+      itemsRemaining += stockQuantity;
 
-      // Filter sales based on the selected filter
       const filteredSales = filterSalesByDate(item.sales || [], filter);
-      const itemSold = filteredSales.reduce((sum, sale) => sum + sale.quantitySold, 0);
-      const itemProfit = filteredSales.reduce((sum, sale) => sum + sale.quantitySold * sale.price, 0);
+
+      const itemSold = filteredSales.reduce(
+        (sum, sale) => sum + (sale.quantitySold || 0),
+        0
+      );
+      const itemProfit = filteredSales.reduce(
+        (sum, sale) => sum + (sale.quantitySold || 0) * (sale.price || 0),
+        0
+      );
 
       totalSold += itemSold;
       totalProfit += itemProfit;
 
-
-      itemsRemaining%itemsToRestock
       if (stockQuantity < 10) {
         itemsToRestock++;
       }
     });
 
-  
-
-    // Set sublabels based on filter selection
     switch (filter) {
       case "day":
         subLabelProfit = "Profit per Day";
@@ -127,9 +131,9 @@ const Dashboard = ( ) => {
 
     setDashboardData({
       profit: {
-        value: totalProfit.toLocaleString(undefined, {maximumFreactionDigits:2}),
+        value: totalProfit.toFixed(0),
         label: "Total Profit",
-        unit: "NGN",
+        unit: <strike>N</strike>,
         icon: "fa-coins",
         subLabel: subLabelProfit,
       },
@@ -159,47 +163,23 @@ const Dashboard = ( ) => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1 className="dash">Dashboard</h1>
 
-      {/* Time period filter buttons */}
       <div className="filter-buttons">
-        <button
-          onClick={() => setFilter("all")}
-          className={filter === "all" ? "active" : ""}
-        >
-          All Time
-        </button>
-        <button
-          onClick={() => setFilter("day")}
-          className={filter === "day" ? "active" : ""}
-        >
-          Today
-        </button>
-        <button
-          onClick={() => setFilter("week")}
-          className={filter === "week" ? "active" : ""}
-        >
-          This Week
-        </button>
-        <button
-          onClick={() => setFilter("month")}
-          className={filter === "month" ? "active" : ""}
-        >
-          This Month
-        </button>
-        <button
-          onClick={() => setFilter("year")}
-          className={filter === "year" ? "active" : ""}
-        >
-          This Year
-        </button>
+        {["all", "day", "week", "month", "year"].map((period) => (
+          <button
+            key={period}
+            onClick={() => setFilter(period)}
+            className={filter === period ? "active" : ""}
+          >
+            {period === "all" ? "All Time" : period.charAt(0).toUpperCase() + period.slice(1)}
+          </button>
+        ))}
       </div>
 
-      {/* Analysis Cards */}
       <section className="analysis-parent dashboard">
         <AnalysisCard id="profit-today" {...dashboardData.profit} />
         <AnalysisCard id="items-sold-today" {...dashboardData.itemsSold} />
-        <AnalysisCard id="total-stocked" {...dashboardData.totalStocked} />
         <AnalysisCard id="items-to-stock" {...dashboardData.itemsToStock} />
         <div id="p-parent" className="analysis">
           <h1 id="items-remaining">
@@ -216,12 +196,11 @@ const Dashboard = ( ) => {
                   ? (dashboardData.itemsRemaining.value / 3)
                   : 0
               }%`,
-             }}
+            }}
           ></div>
         </div>
       </section>
 
-      {/* Inventory Page for listing items */}
       <InventoryPage inventory={inventoryData} hideActions={true} />
     </div>
   );

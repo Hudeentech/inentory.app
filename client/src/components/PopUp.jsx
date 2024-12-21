@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 
 const PopUp = ({ message, type, onClose }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
-            onClose();
-        }, 3000); // Automatically close after 3 seconds
+            onClose(); // Close popup after 3 seconds
+        }, 3000);
 
-        return () => clearTimeout(timer);
+        return () => clearTimeout(timer); // Cleanup timer on unmount
     }, [onClose]);
 
     const getPopupClass = () => {
@@ -22,7 +23,7 @@ const PopUp = ({ message, type, onClose }) => {
             case "sale-recorded":
                 return "popup-sale-recorded";
             default:
-                return "";
+                return "popup-default"; // Fallback class
         }
     };
 
@@ -31,6 +32,18 @@ const PopUp = ({ message, type, onClose }) => {
             <p>{message}</p>
         </div>
     );
+};
+
+// Prop validation
+PopUp.propTypes = {
+    message: PropTypes.string.isRequired,
+    type: PropTypes.string,
+    onClose: PropTypes.func.isRequired,
+};
+
+// Default props
+PopUp.defaultProps = {
+    type: "default",
 };
 
 export default PopUp;

@@ -15,19 +15,21 @@ const Nav = ({ setActivePage, activePage }) => (
             >
                 <i className="fas fa-box-open"></i> <p>Restock</p>
             </li>
-            <li
-                onClick={() => setActivePage("Store")}
-                className={activePage === "Store" ? "active" : ""}
-                aria-label="Go to Store"
-            >
-                <i className="fas fa-store"></i> <p>Store</p>
-            </li>
+      
             <li
                 onClick={() => setActivePage("Sales")}
                 className={activePage === "Sales" ? "active" : ""}
                 aria-label="Go to Sales"
             >
                 <i className="fas fa-receipt"></i> <p>Sales</p>
+            </li>
+
+            <li
+                onClick={() => setActivePage("Store")}
+                className={activePage === "Store" ? "active" : ""}
+                aria-label="Go to Store"
+            >
+                <i className="fas fa-store"></i> <p>Store</p>
             </li>
         </ul>
     </nav>

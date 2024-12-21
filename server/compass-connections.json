@@ -1,0 +1,24 @@
+{
+  "type": "Compass Connections",
+  "version": {
+    "$numberInt": "1"
+  },
+  "connections": [
+    {
+      "id": "f36c4ed3-2a07-4f92-9b82-2c6e87e8c8bd",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1734674512062"
+        }
+      },
+      "favorite": {
+        "name": "inventoryDB"
+      },
+      "savedConnectionType": "favorite",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {}
+      }
+    }
+  ]
+}

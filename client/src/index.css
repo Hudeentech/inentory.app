@@ -17,7 +17,7 @@ body {
   min-width: 100%;
   min-height: 100svh;
   grid-template-columns: auto 1fr;
-  grid-template-rows: 5% auto;
+  grid-template-rows: 7% auto;
   position: relative;
   border-radius: 24px;
   row-gap: 0.5em;
@@ -25,45 +25,36 @@ body {
     "nav header"
     "nav main"
     "nav main";
-
   transition: all grid-template-columns 0.3s;
   padding: 0.5em;
+}
+
+.component-title{
+  padding-top: 1.8em;
+  width: 100%;
 }
 
 .header {
   grid-area: header;
   color: white;
-  width: 100%;
-  border-radius: 14px;
-  display: flex;
-  justify-content: center;
-  padding: 1em 0;
+  min-width: 300px;
+  margin: 1em auto;
+  height: fit-content;
+  border-radius: 50px;
   background: #1c1c1c;
-  position: sticky;
-  top: 10px;
-  z-index: 100;
+  border:1px solid rgb(54, 54, 54);
 
-}
-.logo {
-  display: none;
-}
-.logo p {
-  font-weight: 700;
-  font-size: 20px;
-  display: none;
-  padding-left: 1em;
 }
 
 .search-container {
   text-align: center;
-  margin-bottom: 20px;
   display: contents;
   flex-grow: 1;
 }
 
 .search-container input {
-  padding: 10px 1em;
-  width: 50%;
+  padding: 10px .5em;
+  width: 100%;
   font-size: 16px;
   border: none;
   background-color:transparent;
@@ -168,16 +159,19 @@ a {
   .header {
     grid-area: header;
     color: white;
-    min-width: 100%;height: 9%;
-    border-radius: 14px;
+    min-width: 100%;
+    height: 9%;
     display: flex;
     justify-content: center;
-    padding: 1em 0;
+    padding: .5em 0;
     background: #1c1c1c;
     position: fixed;
-    top: 5px;left: 0;
+    top: 0;
+    left: 0;
     z-index: 100;
-
+    border-radius: 0;
+    border: none;
+    border-bottom:1px solid rgb(54, 54, 54);
   }
   .nav{
     position:fixed;
@@ -185,6 +179,9 @@ a {
     bottom: 0;
     left: 0;
     width: 100%;
+    border-radius: 0;
+    border: none;
+    border-top:1px solid rgb(69, 69, 69);
   }
 
   nav ul {
@@ -380,7 +377,7 @@ table {
 }
 
 th {
-  border: 1px solid #676767;
+  border-bottom: 1px solid #676767;
 }
 
 th,
@@ -398,7 +395,7 @@ td {
     padding: 0.3em 1em;
     border-radius: 30px;
     border: none;
-    background-color: #292929;
+    background-color: transparent;
     color: #161616;
     margin: 0 0.2em;
 
@@ -408,31 +405,13 @@ td {
   }
 }
 
-tr:nth-child(even) {
-  background-color: #2121210c;
-  border: 1px solid #dddddd27;
-}
-
 tr:hover {
   background-color: #00000036;
 }
 
-.out-of-stock {
-  background-color: #ff4d4d;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  width: fit-content;
-  font-size: 0.7em;
-}
 
 .in-stock {
-  background-color: #4caf50;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  width: fit-content;
-  font-size: 0.7em;
+  background-color: #00ff080a;
 }
 
 @media (max-width:810px) {
@@ -616,14 +595,20 @@ nav ul li.active i {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 16px 24px;
+  padding: .5em 1em;
+  min-width:250px;
   border-radius: 8px;
   font-size: 16px;
-  color: #fff;
+  color: #ffffff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   cursor: pointer;
+  background-color: #007bff;
   animation: fadeInOut 3s ease-in-out;
+  
+}
+.popup:empty{
+  display: none;
 }
 
 /* Specific Popup Styles */
@@ -752,8 +737,8 @@ form button {
   .grid {
     display: grid;
     min-width: 100%;
-    min-height: 100vh;
-    grid-template-columns: auto;
+    min-height: 100dvh;
+    grid-template-columns:minmax(200px, auto);
     grid-template-rows: 5% auto 5%;
     position: relative;
     border-radius: 24px;
@@ -800,8 +785,9 @@ form button {
     }
 
     .filter-buttons{
-      overflow: hidden;
+      overflow: scroll;
       scrollbar-width: none;
+
       button{
         font-size: .6em;
         text-wrap: nowrap;
@@ -820,12 +806,15 @@ form button {
     nav ul {
       display: flex;
       flex-direction: row;
-
+      justify-content: center;
       align-items: center;
       list-style-type: none;
       height: 100%;
       background-color: transparent;
 
+      li{
+        padding: 0;
+      }
       li i{
         font-size: 1.5em;
       }
@@ -835,15 +824,25 @@ form button {
       text-wrap: nowrap;
       font-size: .7em;
     }
+    table{
+      overflow: scroll;
+      scrollbar-width: none;
+      table-layout: auto;
+      empty-cells: hide;
+    }
 
     th, td, tr{
       text-wrap: nowrap;
       font-size: .9em;
+    
+
     }
+
     .fields {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, auto));
       gap: 1em;
+      margin: auto;
     }
 
     .form-section{
@@ -851,4 +850,152 @@ form button {
       display: flex;
       flex-direction: column;
     }
+}
+
+.bg-red-500{
+  background: #ff000019;
+  color: white;
+}
+
+
+.store-container {
+  max-width: 1200px;
+  margin: auto;
+  width: 100%;
+  text-align: left;
+}
+
+.store-title {
+  text-align: left;
+  font-size: clamp(1.5rem, 4.5vw ,2rem );
+  margin-bottom: 20px;
+  color: gold;
+}
+
+.loading-message,
+.error-message,
+.no-items-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #c8c8c8;
+}
+
+.store-head{
+  padding: 1em 0;
+  gap: .5em;
+}
+
+
+
+/* Grid Styling */
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Card Styling */
+.store-card {
+  background: #1c1c1c;
+  border: 1px solid #282828;
+  
+  flex-wrap: wrap;
+  gap: 1em;
+  row-gap: .2em;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.store-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.item-name {
+  font-size: 1.3rem;
+  color: white;
+  margin-bottom: 10px;
+  width: 100%;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.item-detail {
+  font-size: 1rem;
+  color: #52ff01;
+  margin: 5px 0;
+}
+
+.item-date {
+  font-size: 0.9rem;
+  color: #00a6ff;
+  margin-top: 10px;
+  margin-right: 1em;
+}
+
+strong{
+  font-weight: 300;
+  margin-right: .5em;
+}
+
+/* Button Styling */
+.stock-status {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-items:start ;
+  align-items: center;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  outline: 1px solid rgb(49, 49, 49);
+  padding: 1em;
+}
+
+.out-of-stock{
+  background-color: #ff00002d;
+}
+
+.feedback-message {
+  text-align: center;
+  color: green;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+/* Button Styling */
+.delete-all-btn {
+  display: block;
+  margin: 20px auto;
+  padding: .5em 1em;
+  background-color: #dc3545;
+  color: white;
+  text-wrap: nowrap;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.delete-all-btn:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.delete-item-btn {
+  display: inline-block;
+  margin-top: 10px;
+  margin-left: 20px;
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
 }

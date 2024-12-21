@@ -1,10 +1,17 @@
 import React from "react";
 
-const EditDeleteButtons = ({ onEdit, onDelete }) => {
+const EditDeleteButtons = ({ onEdit, onDelete, item }) => {
   return (
     <div className="edit-delete-buttons">
-      <button onClick={onEdit}><i className="fas fa-pen"></i></button>
-      <button onClick={onDelete}><i className="fas fa-trash"></i></button>
+      {/* Edit Button */}
+      <button onClick={() => onEdit(item)}>
+        <i className="fas fa-pen"></i>
+      </button>
+      
+      {/* Delete Button */}
+      <button onClick={() => onDelete(item._id)}>
+        <i className="fas fa-trash"></i>
+      </button>
     </div>
   );
 };
