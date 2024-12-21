@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import InventoryPage from "./InventoryPage"; // Adjust the path if necessary
+import addNotification from 'react-push-notification';
 
 const api ='https://inentory-app.vercel.app'
 
@@ -103,11 +104,30 @@ const Dashboard = () => {
       totalSold += itemSold;
       totalProfit += itemProfit;
 
+
       if (stockQuantity < 10) {
         itemsToRestock++;
       }
-    });
 
+
+      const clickToNotify = () => {
+        addNotification({
+          title: 'WARNINIG!!! Inventory is running low',
+          message: `You have ${itemsToRestock} to restock, please check inventory!🚨`,
+          duration: 5000,
+          icon: '/warehouse.svg',
+          theme: 'red',
+          native: true,
+          onClick: () => window.location = 'https://hudeeninventory.netlify.app/',
+    
+        })
+      }
+      if (itemsRemaining <= 10) {
+        clickToNotify()
+      }
+    
+    });
+ 
     switch (filter) {
       case "day":
         subLabelProfit = "Profit per Day";
@@ -130,6 +150,7 @@ const Dashboard = () => {
         subLabelItemsSold = "Total Items Sold";
         break;
     }
+ 
 
     setDashboardData({
       profit: {
@@ -163,6 +184,8 @@ const Dashboard = () => {
     });
   }, [inventoryData, filter]);
 
+
+  
   return (
     <div>
       <h1 className="dash">Dashboard</h1>

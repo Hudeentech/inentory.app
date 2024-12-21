@@ -115,6 +115,16 @@ const SalesForm = () => {
       setSalesData({ itemSold: "", amountSold: "", priceSold: "" });
       setLoading(false);
     }
+
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setFormData({
+      itemSold: "",
+      amountSold: "",
+      priceSold: "",
+    });
   };
 
   return (

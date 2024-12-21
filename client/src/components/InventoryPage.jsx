@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import Header from "./header";
+import addNotification from 'react-push-notification';
+
 
 const InventoryPage = ({ inventory, handleEditItem, handleDelete }) => {
   const [localInventory, setLocalInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
-  const api ='https://inentory-app.vercel.app'
+  const api = 'https://inentory-app.vercel.app'
   const socketUrl = `wss://inentory-app.vercel.app/ws`;
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(socketUrl, {
@@ -55,13 +57,16 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete }) => {
     setFilteredInventory(filtered);
   };
 
+
   // Check WebSocket connection status
   const connectionStatus = ["Connecting", "Open", "Closing", "Closed"][readyState];
   console.log("WebSocket connection status:", connectionStatus);
 
+ 
+
   return (
     <div className="inventoryPage">
-      <div className="component-title">  
+      <div className="component-title">
         <h2>Inventory</h2>
         <Header onSearch={handleSearch} />
       </div>

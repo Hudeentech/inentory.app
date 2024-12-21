@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import PopUp from "./PopUp";
 import InventoryPage from "./InventoryPage";
 import useWebSocket from "react-use-websocket";
+import addNotification from 'react-push-notification';
+
 
 const BASE_URL = "https://inentory-app.vercel.app";
 
