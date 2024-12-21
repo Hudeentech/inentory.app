@@ -20,7 +20,7 @@ const ItemForm = () => {
 
   // WebSocket setup
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
-    "ws://localhost:3000", // Replace with your WebSocket server URL
+    "wss://inentory-app.vercel.app/ws", // Replace with your WebSocket server URL
     {
       shouldReconnect: () => true, // Automatically reconnect on disconnection
     }
