@@ -8,7 +8,7 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingItem, setEditingItem] = useState(null);
 
-  const { sendJsonMessage } = useWebSocket("ws://inentory-app.vercel.app/ws", {
+  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
     onMessage: (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "inventory_update") {

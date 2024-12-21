@@ -6,7 +6,7 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete }) => {
   const [localInventory, setLocalInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
   const api ='https://inentory-app.vercel.app'
-  const socketUrl = `ws://inentory-app.vercel.app/ws`;
+  const socketUrl = `ws://localhost:3000/ws`;
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(socketUrl, {
     onOpen: () => console.log("WebSocket connection opened"),
