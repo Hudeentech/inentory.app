@@ -231,6 +231,7 @@ const ItemForm = () => {
         />
       )}
       <InventoryPage
+         activePage="Restock"
         inventory={inventory}
         handleEditItem={handleEditItem}
         handleDelete={handleDelete}

@@ -16,7 +16,7 @@ const AnalysisCard = ({ id, value, label, unit, icon, subLabel }) => (
         <i className="fas fa-exclamation-circle"></i>
         {subLabel}
       </em>
-    )}
+    )} 
     <i className={`fas ${icon}`}></i>
   </div>
 );
@@ -154,7 +154,7 @@ const Dashboard = () => {
 
     setDashboardData({
       profit: {
-        value: totalProfit.toFixed(0),
+        value: totalProfit.toLocaleString(undefined, {maximumFractionDigits:2}),
         label: "Total Profit",
         unit: <strike>N</strike>,
         icon: "fa-coins",

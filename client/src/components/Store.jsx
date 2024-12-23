@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PopUp from "./PopUp";
-import Header from "./header"
+import Header from "./header";
 
 const Store = () => {
   const [items, setItems] = useState([]);
@@ -31,33 +31,6 @@ const Store = () => {
     }
   };
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  // Delete all items
-  const deleteAllItems = async () => {
-    if (!window.confirm("Are you sure you want to delete all items?")) return;
-
-    setLoading(true);
-    try {
-      const response = await fetch(`${BASE_URL}/inventory`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        setFeedbackMessage("All items have been successfully deleted.");
-        setItems([]);
-        setFilteredItems([]);
-      } else {
-        setFeedbackMessage("Failed to delete all items.");
-      }
-    } catch (err) {
-      setFeedbackMessage("An error occurred while deleting items.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Delete individual item
   const deleteItem = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
@@ -82,17 +55,40 @@ const Store = () => {
     }
   };
 
-  // Handle search query
-  const handleSearch = (query) => {
-    console.log("Search query:", query); // Debug
-    const lowerCaseQuery = query.toLowerCase();
+    // Handle search query
+    const handleSearch = (query) => {
+      console.log("Search query:", query); // Debug
+      const lowerCaseQuery = query.toLowerCase();
+  
+      const filtered = items.filter((item) =>
+        item.name.toLowerCase().includes(lowerCaseQuery)
+      );
+      console.log("Filtered items:", filtered); // Debug
+      setFilteredItems(filtered);
+    };
+  
 
-    const filtered = items.filter((item) =>
-      item.name.toLowerCase().includes(lowerCaseQuery)
-    );
-    console.log("Filtered items:", filtered); // Debug
-    setFilteredItems(filtered);
+  // Fetch sales data for each item
+  const fetchSalesData = async (itemId) => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/sales/${itemId}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.sales;
+      } else {
+        console.error("Failed to fetch sales data.");
+        return [];
+      }
+    } catch (err) {
+      console.error("An error occurred while fetching sales data.", err);
+      return [];
+    }
   };
+
+  useEffect(() => {
+    fetchItems();
+    fetchSalesData();
+  }, []);
 
   return (
     <div className="store-container">
@@ -119,33 +115,61 @@ const Store = () => {
           {filteredItems.map((item) => (
             <div
               className={`stock-status ${
-                item.stockQuantity > 10 ? "store-card" : "out-of-stock"
+                item.stockQuantity > 10 ? "store-card" : "red-bg"
               }`}
               key={item._id}
             >
               <h2 className="item-name">{item.name}</h2>
-              <p className="item-detail">
-                <strong>Stock:</strong> {item.stockQuantity}
-              </p>
-              <p className="item-detail">
-                <strong>Price:</strong> <strike>N</strike>{item.price}
-              </p>
-              <p className="item-detail">
-                <strong>Price Tag:</strong><strike>N</strike>{item.priceTag}
-              </p>
-              <p className="item-date">
-                <strong>Added:</strong>{" "}
-                {new Date(item.dateAdded).toLocaleDateString()}
-              </p>
-              <p className="item-detail">
-                {item.stockQuantity > 0 ? "In Stock" : "Out of Stock"}
-              </p>
-              <button
-                className="delete-item-btn"
-                onClick={() => deleteItem(item._id)}
-              >
-                🗑 Delete
-              </button>
+              <div className="details">
+                <p className="item-detail">
+                  <b>Stock Remaining:</b> <p>{item.stockQuantity}</p>
+                </p>
+                <p className="item-detail">
+                  <b>Total Stocked</b>{" "}
+                  <p>
+                    {item.stockQuantity -
+                      item.sales.reduce(
+                        (total, sale) => total - sale.quantitySold,
+                        0
+                      )}
+                  </p>
+                </p>
+                <p className="item-detail">
+                  <b>Price:</b>{" "}
+                  <p>
+                    <strike>N</strike>
+                    {item.price.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                </p>
+                <p className="item-detail">
+                  <b>Price Tag:</b>{" "}
+                  <p>
+                    <strike>N</strike>
+                    {item.priceTag.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                </p>
+                <p className="item-date item-detail">
+                  <b>Added:</b>{" "}
+                  <p>{new Date(item.dateAdded).toLocaleDateString()}</p>
+                </p>
+                <p className="item-detail">
+                  <b>Status:</b>
+                  <p>
+                    {" "}
+                    {item.stockQuantity > 10 ? "In Stock" : "Out of Stock"}
+                  </p>
+                </p>
+                <button
+                  className="delete-item-btn"
+                  onClick={() => deleteItem(item._id)}
+                >
+                  <i className="fas fa-trash"></i> Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -3,11 +3,10 @@ import useWebSocket from "react-use-websocket";
 import Header from "./header";
 import addNotification from 'react-push-notification';
 
-
-const InventoryPage = ({ inventory, handleEditItem, handleDelete }) => {
+const InventoryPage = ({ inventory, handleEditItem, handleDelete, activePage }) => {
   const [localInventory, setLocalInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
-  const api = 'https://inentory-app.vercel.app'
+  const api = 'https://inentory-app.vercel.app';
   const socketUrl = `wss://inentory-app.vercel.app/ws`;
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(socketUrl, {
@@ -15,7 +14,6 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete }) => {
     onClose: () => console.log("WebSocket connection closed"),
     onError: (error) => console.error("WebSocket error:", error),
     onMessage: (event) => {
-      console.log("WebSocket message received:", event.data); // Debug
       try {
         const data = JSON.parse(event.data);
 
@@ -38,31 +36,20 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete }) => {
     },
   });
 
-  // Sync inventory with props on load
   useEffect(() => {
-    console.log("Initial inventory from props:", inventory); // Debug
     setLocalInventory(inventory);
     setFilteredInventory(inventory);
   }, [inventory]);
 
-  // Handle search query
   const handleSearch = (query) => {
-    console.log("Search query:", query); // Debug
     const lowerCaseQuery = query.toLowerCase();
-
     const filtered = localInventory.filter((item) =>
       item.name.toLowerCase().includes(lowerCaseQuery)
     );
-    console.log("Filtered inventory:", filtered); // Debug
     setFilteredInventory(filtered);
   };
 
-
-  // Check WebSocket connection status
   const connectionStatus = ["Connecting", "Open", "Closing", "Closed"][readyState];
-  console.log("WebSocket connection status:", connectionStatus);
-
- 
 
   return (
     <div className="inventoryPage">
@@ -77,7 +64,7 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete }) => {
             <th>Quantity</th>
             <th className="mobile">Price per Unit</th>
             <th className="mobile">Price Tag</th>
-            <th>Actions</th>
+            {activePage === "Restock" && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -94,21 +81,23 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete }) => {
                   {item.price}
                 </td>
                 <td className="mobile">
-                  <strike>N</strike> {item.priceTag}
+                  <strike>N</strike> {item.priceTag.toLocaleString(undefined, {maximumFractionDigits:2})}
                 </td>
-                <td>
-                  <button onClick={() => handleEditItem(item)}>
-                    <i className="fas fa-edit"></i>
-                  </button>
-                  <button onClick={() => handleDelete(item._id)}>
-                    <i className="fas fa-trash"></i>
-                  </button>
-                </td>
+                {activePage === "Restock" && (
+                  <td>
+                    <button onClick={() => handleEditItem(item)}>
+                      <i className="fas fa-edit"></i>
+                    </button>
+                    <button style={activePage === "Restock" ? {display:'none'} : {display:'block'} } onClick={() => handleDelete(item._id)}>
+                      <i className="fas fa-trash"></i>
+                    </button>
+                  </td>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5">No items found.</td>
+              <td colSpan={activePage === "Restock" ? "5" : "4"}>No items found.</td>
             </tr>
           )}
         </tbody>
