@@ -813,7 +813,7 @@ form button {
       scrollbar-width: none;
 
       button{
-        font-size: .6em;
+        font-size: 1em;
         text-wrap: nowrap;
       }
     }
