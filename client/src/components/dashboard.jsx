@@ -115,7 +115,7 @@ const Dashboard = () => {
           title: 'WARNINIG!!! Inventory is running low',
           message: `You have ${itemsToRestock} to restock, please check inventory!🚨`,
           duration: 5000,
-          icon: '/warehouse.svg',
+          icon: './warehouse.svg',
           theme: 'red',
           native: true,
           onClick: () => window.location = 'https://hudeeninventory.netlify.app/',
