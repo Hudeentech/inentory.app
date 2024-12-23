@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import PopUp from "./PopUp";
 import InventoryPage from "./InventoryPage";
+import { ToastContainer, toast } from "react-toastify";
 
 const SalesForm = () => {
   const [salesData, setSalesData] = useState({
@@ -10,9 +10,6 @@ const SalesForm = () => {
   });
 
   const [inventory, setInventory] = useState([]);
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [feedbackType, setFeedbackType] = useState(""); // Tracks type of feedback (success/error)
-  const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const BASE_URL = "https://inentory-app.vercel.app";
@@ -52,9 +49,7 @@ const SalesForm = () => {
     );
 
     if (!item) {
-      setFeedbackMessage(`Item "${salesData.itemSold}" not found in inventory.`);
-      setFeedbackType("error");
-      setShowPopUp(true);
+      toast.warning(`Item "${salesData.itemSold}" not found in inventory.`);
       setSalesData({ itemSold: "", amountSold: "", priceSold: "" });
       return;
     }
@@ -63,16 +58,13 @@ const SalesForm = () => {
     const priceSold = parseFloat(salesData.priceSold);
 
     if (soldAmount <= 0 || priceSold <= 0) {
-      setFeedbackMessage("Amount and price must be positive values.");
-      setFeedbackType("error");
-      setShowPopUp(true);
+      toast.warning("Amount and price must be positive values.");
+    
       return;
     }
 
     if (soldAmount > item.stockQuantity) {
-      setFeedbackMessage(`Not enough stock for item "${salesData.itemSold}".`);
-      setFeedbackType("error");
-      setShowPopUp(true);
+      toast.warning(`Not enough stock for item "${salesData.itemSold}".`);
       return;
     }
 
@@ -95,23 +87,19 @@ const SalesForm = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setFeedbackMessage(errorData.error || "Error recording sale.");
-        setFeedbackType("error");
+        toast.error(errorData.error || "Error recording sale.");
       } else {
         // Trigger inventory refresh
         await fetchInventory();
 
-        setFeedbackMessage(
-          `Sale successful: ${salesData.amountSold} of "${salesData.itemSold}" sold at $${salesData.priceSold} each.`
+        toast.success(
+          `Sale successful: ${salesData.amountSold} of "${salesData.itemSold}" sold at NG ${salesData.priceSold} each.`
         );
-        setFeedbackType("success");
       }
     } catch (error) {
       console.error("Network error:", error);
-      setFeedbackMessage("Network error: Unable to process sale.");
-      setFeedbackType("error");
+      toast.error("Network error: Unable to process sale.");
     } finally {
-      setShowPopUp(true);
       setSalesData({ itemSold: "", amountSold: "", priceSold: "" });
       setLoading(false);
     }
@@ -182,14 +170,7 @@ const SalesForm = () => {
         </div>
       </form>
 
-      {showPopUp && (
-        <PopUp
-          message={feedbackMessage}
-          type={feedbackType}
-          onClose={() => setShowPopUp(false)}
-        />
-      )}
-
+      <ToastContainer  theme="dark"/>
       <InventoryPage inventory={inventory} hideActions={true} />
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import InventoryPage from "./InventoryPage"; // Adjust the path if necessary
+import 'react-toastify/dist/ReactToastify.css';
 
 const api ='https://inentory-app.vercel.app'
 
@@ -36,13 +37,14 @@ const Dashboard = () => {
     try {
       const response = await fetch(`${api}/inventory`);
       if (response.ok) {
-        const data = await response.json();
-        setInventoryData(data);
+      const data = await response.json();
+      setInventoryData(data);
       } else {
-        console.error("Failed to fetch inventory:", response.statusText);
+      console.error("Failed to fetch inventory:", response.statusText);
       }
     } catch (error) {
       console.error("Error fetching inventory:", error);
+
     }
   };
 
@@ -207,7 +209,6 @@ const Dashboard = () => {
           ></div>
         </div>
       </section>
-
       <InventoryPage inventory={inventoryData} hideActions={true} />
     </div>
   );

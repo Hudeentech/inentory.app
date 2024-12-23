@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import PopUp from "./PopUp";
 import InventoryPage from "./InventoryPage";
 import useWebSocket from "react-use-websocket";
+import {ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const BASE_URL = "https://inentory-app.vercel.app";
 
@@ -14,9 +15,7 @@ const ItemForm = () => {
     priceTag: "",
   });
   const [inventory, setInventory] = useState([]);
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [feedbackType, setFeedbackType] = useState(""); // Type of message (success/error)
-  const [showPopUp, setShowPopUp] = useState(false);
+
 
   // WebSocket setup
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
@@ -33,16 +32,12 @@ const ItemForm = () => {
       if (response.ok) {
         const data = await response.json();
         setInventory(data);
-        await fetchInventory();
+        toast.success("Inventory fetched successfully");
       } else {
-        setFeedbackMessage("Failed to fetch inventory.");
-        setFeedbackType("error");
-        setShowPopUp(true);
+        toast.error("Failed to fetch inventory");
       }
     } catch (error) {
-      setFeedbackMessage("Error fetching inventory.");
-      setFeedbackType("error");
-      setShowPopUp(true);
+      toast.error("Error fetching inventory");
     }
   };
 
@@ -58,15 +53,11 @@ const ItemForm = () => {
       if (type === "inventoryUpdate") {
         setInventory((prev) =>
           prev.some((item) => item._id === data._id)
-            ? prev.map((item) =>
-                item._id === data._id ? data : item
-              )
+            ? prev.map((item) => (item._id === data._id ? data : item))
             : [...prev, data]
         );
       } else if (type === "inventoryDelete") {
-        setInventory((prev) =>
-          prev.filter((item) => item._id !== data._id)
-        );
+        setInventory((prev) => prev.filter((item) => item._id !== data._id));
       }
     }
   }, [lastJsonMessage]);
@@ -101,9 +92,9 @@ const ItemForm = () => {
           body: JSON.stringify(updatedItem),
         });
         await fetchInventory();
-        setFeedbackMessage(`Stock for "${itemName}" updated!`);
-        setFeedbackType("success");
-      } else {
+        toast.success(`Stock for "${itemName}" updated!`);
+        } 
+        else {
         const newItem = {
           name: itemName,
           stockQuantity: newQuantity,
@@ -117,15 +108,12 @@ const ItemForm = () => {
           body: JSON.stringify(newItem),
         });
 
-        setFeedbackMessage(`Item "${itemName}" added successfully!`);
-        setFeedbackType("success");
-      }
-    } catch (error) {
-      setFeedbackMessage("An error occurred while processing your request.");
-      setFeedbackType("error");
-    }
+        toast.success(`Item "${itemName}" added successfully!`);
+            }
+          } catch (error) {
+            toast.error("An error occurred while processing your request.");
+          }
 
-    setShowPopUp(true);
     resetForm();
   };
 
@@ -155,22 +143,18 @@ const ItemForm = () => {
   const handleDelete = async (itemId) => {
     try {
       await fetch(`${BASE_URL}/inventory/${itemId}`, {
-        method: "DELETE",
+      method: "DELETE",
       });
-      setFeedbackMessage("Item deleted successfully.");
-      setFeedbackType("success");
-      setShowPopUp(true);
+      toast.success("Item deleted successfully.");
     } catch (error) {
-      setFeedbackMessage("An error occurred while deleting the item.");
-      setFeedbackType("error");
-      setShowPopUp(true);
+      toast.error("An error occurred while deleting the item.");
     }
   };
 
   return (
     <>
       <form className="form-group" id="itemForm" onSubmit={handleSubmit}>
-      <h1>Restock</h1>
+        <h1>Restock</h1>
         <div className="fields">
           <div>
             <p className="label">Item Name</p>
@@ -221,15 +205,9 @@ const ItemForm = () => {
           <button className="btn">Submit</button>
         </div>
       </form>
-      {showPopUp && (
-        <PopUp
-          message={feedbackMessage}
-          type={feedbackType}
-          onClose={() => setShowPopUp(false)}
-        />
-      )}
+      <ToastContainer  theme="dark"/>
       <InventoryPage
-         activePage="Restock"
+        activePage="Restock"
         inventory={inventory}
         handleEditItem={handleEditItem}
         handleDelete={handleDelete}

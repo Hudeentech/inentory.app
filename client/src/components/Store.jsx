@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import PopUp from "./PopUp";
 import Header from "./header";
+import { toast, ToastContainer } from "react-toastify";
 
 const Store = () => {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [showPopUp, setShowPopUp] = useState(false);
 
   const BASE_URL = "https://inentory-app.vercel.app";
 
@@ -21,11 +19,14 @@ const Store = () => {
         const data = await response.json();
         setItems(data);
         setFilteredItems(data); // Sync filtered items with fetched items
-      } else {
+        toast.success("Items fetched successfully!");
+            } else {
         setError("Failed to fetch items.");
-      }
-    } catch (err) {
-      setError("An error occurred while fetching items.");
+        toast.error("Failed to fetch items.");
+            }
+          } catch (err) {
+            setError("An error occurred while fetching items.");
+            toast.error("An error occurred while fetching items.");
     } finally {
       setLoading(false);
     }
@@ -41,15 +42,14 @@ const Store = () => {
         method: "DELETE",
       });
       if (response.ok) {
-        setFeedbackMessage("Item deleted successfully.");
+        toast.success("Item deleted successfully.");
         setItems((prevItems) => prevItems.filter((item) => item._id !== id));
         setFilteredItems((prevItems) => prevItems.filter((item) => item._id !== id));
       } else {
-        setFeedbackMessage("Failed to delete the item.");
+        toast.error("Failed to delete the item.");
       }
     } catch (err) {
-      setFeedbackMessage("An error occurred while deleting the item.");
-      setShowPopUp(true);
+      toast.error("An error occurred while deleting the item.");
     } finally {
       setLoading(false);
     }
@@ -95,17 +95,11 @@ const Store = () => {
       <div className="store-head">
         <h1>Items Store</h1>
         <Header onSearch={handleSearch} />
-        {feedbackMessage && showPopUp && (
-          <PopUp
-            message={feedbackMessage}
-            type={feedbackType}
-            onClose={() => setShowPopUp(false)}
-          />
-        )}
+        <ToastContainer theme="dark"/>
       </div>
 
       {loading ? (
-        <p className="loading-message">Loading...</p>
+        <p className="loading-message"> <i className="fas fa-spinner fa-spin" style={{color:"white"}}></i> Loading...</p>
       ) : error ? (
         <p className="error-message">{error}</p>
       ) : filteredItems.length === 0 ? (
