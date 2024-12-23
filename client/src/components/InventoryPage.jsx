@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import Header from "./header";
-import addNotification from 'react-push-notification';
 
 const InventoryPage = ({ inventory, handleEditItem, handleDelete, activePage }) => {
   const [localInventory, setLocalInventory] = useState([]);
