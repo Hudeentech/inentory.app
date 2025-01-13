@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Header from "./Header.jsx";
+import Header from "./header.jsx";
 import { toast, ToastContainer } from "react-toastify";
 
 const Store = () => {
