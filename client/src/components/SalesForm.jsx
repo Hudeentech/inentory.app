@@ -43,7 +43,7 @@ const SalesForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     const item = inventory.find(
       (item) => item.name.toLowerCase() === salesData.itemSold.toLowerCase()
     );

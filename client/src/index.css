@@ -343,7 +343,8 @@ a {
 
 #progress {
   background-color: #4caf4f58; /* Progress bar color */
-  animation: range 1s ease-in-out forwards;
+  animation: range 1.5s ease-in-out forwards;
+  animation-delay: .5s;
   transition: background-color 0.3s ease;
   flex-grow: 2;
   padding: 1em;
@@ -609,56 +610,7 @@ nav ul li.active i {
   background-color: #55ff37;
   color: black;
 }
-.popup {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: .5em 1em;
-  min-width:250px;
-  border-radius: 8px;
-  font-size: 16px;
-  color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  cursor: pointer;
-  background-color: #007bff;
-  animation: fadeInOut 3s ease-in-out;
-  
-}
-.popup:empty{
-  display: none;
-}
 
-/* Specific Popup Styles */
-.popup-success {
-  background-color: green; /* Success */
-}
-
-.popup-error {
-  background-color: crimson; /* General Errors */
-}
-
-.popup-stock-error {
-  background-color: lightblue; /* Not enough stock */
-  color: #222;
-  p {
-    color: #1c1c1c;
-  }
-}
-
-.popup-item-not-found {
-  background-color: orange; /* Item not found */
-}
-
-.popup-sale-recorded {
-  background-color: gold; /* Sale recorded */
-  color: #222;
-
-  p {
-    color: #1c1c1c;
-  }
-}
 
 /* Animation */
 @keyframes fadeInOut {
@@ -878,8 +830,11 @@ form button {
 }
 
 .bg-red-500{
-  background: #ff000019;
-  color: white;
+  animation: out-of-stock 1s infinite alternate;
+}
+.in-stock{
+  background-color: transparent;
+  border-bottom: 1px solid #252525;
 }
 
 
@@ -918,7 +873,7 @@ form button {
 /* Grid Styling */
 .store-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, .5fr));
   gap: 20px;
   width: 100%;
 }
@@ -943,16 +898,17 @@ form button {
 }
 
 .item-name {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   color: white;
   margin-bottom: 10px;
-  width: 100%;
+  width: 70%;
+  color: gold;
   text-transform: capitalize;
   font-weight: 600;
 }
 
 .item-detail {
-  font-size: 1rem;
+  font-size: .9rem;
   color: #52ff01;
   margin:0;
   display: flex;
@@ -973,7 +929,7 @@ form button {
 
 
 strong{
-  font-weight: 300;
+  font-weight: 200;
   margin-right: .5em;
 }
 
@@ -998,12 +954,18 @@ strong{
 }
 
 .out-of-stock{
-  background-color: #ff00002d;
+  background-color: #ff00001e;
+}
+@keyframes out-of-stock {
+  0% {
+    outline: 1px solid #353535;
+  }
+  100% {
+    outline: 1px solid #ff0000;
+  }
 }
 
 .red-bg{
-  background-color: #ff00002d;
-  border: 1px solid #282828;
   position: relative;
   
   flex-wrap: wrap;
@@ -1013,6 +975,7 @@ strong{
   padding: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: out-of-stock 1s infinite alternate;
 }
 
 .feedback-message {

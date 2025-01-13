@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Header from "./header";
+import Header from "./Header.jsx";
 import { toast, ToastContainer } from "react-toastify";
 
 const Store = () => {
@@ -19,7 +19,6 @@ const Store = () => {
         const data = await response.json();
         setItems(data);
         setFilteredItems(data); // Sync filtered items with fetched items
-        toast.success("Items fetched successfully!");
             } else {
         setError("Failed to fetch items.");
         toast.error("Failed to fetch items.");
@@ -109,7 +108,7 @@ const Store = () => {
           {filteredItems.map((item) => (
             <div
               className={`stock-status ${
-                item.stockQuantity > 10 ? "store-card" : "red-bg"
+                item.stockQuantity > 5 ? "store-card" : "red-bg"
               }`}
               key={item._id}
             >

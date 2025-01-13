@@ -5,40 +5,58 @@ import Header from "./header";
 const InventoryPage = ({ inventory, handleEditItem, handleDelete, activePage }) => {
   const [localInventory, setLocalInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
-  const api = 'https://inentory-app.vercel.app';
-  const socketUrl = `wss://inentory-app.vercel.app/ws`;
+  const socketUrl = `wss://ws.inentory-app.vercel.app/inventory`;
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(socketUrl, {
-    onOpen: () => console.log("WebSocket connection opened"),
-    onClose: () => console.log("WebSocket connection closed"),
-    onError: (error) => console.error("WebSocket error:", error),
-    onMessage: (event) => {
-      try {
-        const data = JSON.parse(event.data);
-
-        if (data.type === "inventory_update") {
-          setLocalInventory((prevInventory) => {
-            const updatedInventory = [...prevInventory];
-            const itemIndex = updatedInventory.findIndex((item) => item._id === data.item._id);
-
-            if (itemIndex !== -1) {
-              updatedInventory[itemIndex] = data.item;
-            } else {
-              updatedInventory.push(data.item);
-            }
-            return updatedInventory;
-          });
-        }
-      } catch (parseError) {
-        console.error("Error parsing WebSocket message:", parseError);
-      }
-    },
+  const { lastJsonMessage } = useWebSocket(socketUrl, {
+    onOpen: () => console.log("WebSocket Connected"),
+    onClose: () => console.log("WebSocket Disconnected"),
+    onError: (error) => console.error("WebSocket Error:", error),
+    shouldReconnect: () => true,
+    reconnectAttempts: 5,
+    reconnectInterval: 2000
   });
 
+  // Handle WebSocket messages
   useEffect(() => {
-    setLocalInventory(inventory);
-    setFilteredInventory(inventory);
+    if (lastJsonMessage) {
+      try {
+        const { type, item } = lastJsonMessage;
+        if ((type === "inventory_update" || type === "inventory_add") && item) {
+          setLocalInventory((prevLocalInventory) => {
+            const updatedInventory = [...prevLocalInventory];
+            const index = updatedInventory.findIndex(existing => existing._id === item._id);
+  
+            if (index !== -1) {
+              updatedInventory[index] = { ...updatedInventory[index], ...item };
+            } else {
+              updatedInventory.push(item);
+            }
+  
+            return updatedInventory;
+          });
+        } else if (type === "inventory_delete" && item) {
+          setLocalInventory((prevLocalInventory) => 
+            prevLocalInventory.filter(existing => existing._id !== item._id)
+          );
+        }
+      } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+      }
+    }
+  }, [lastJsonMessage]);
+
+  // Initialize and sync inventory from props
+  useEffect(() => {
+    if (inventory && inventory.length > 0) {
+      setLocalInventory(inventory);
+      setFilteredInventory(inventory);
+    }
   }, [inventory]);
+
+  // Update filtered inventory when local inventory changes
+  useEffect(() => {
+    setFilteredInventory(localInventory);
+  }, [localInventory]);
 
   const handleSearch = (query) => {
     const lowerCaseQuery = query.toLowerCase();
@@ -47,8 +65,6 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete, activePage }) 
     );
     setFilteredInventory(filtered);
   };
-
-  const connectionStatus = ["Connecting", "Open", "Closing", "Closed"][readyState];
 
   return (
     <div className="inventoryPage">
@@ -71,23 +87,24 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete, activePage }) 
             filteredInventory.map((item) => (
               <tr
                 key={item._id}
-                className={item.stockQuantity <= 10 ? "bg-red-500 text-white" : "in-stock"}
+                className={item.stockQuantity <= 5 ? "bg-red-500 text-white" : "in-stock"}
               >
                 <td>{item.name}</td>
-                <td>{item.stockQuantity}</td>
+                <td>{item.stockQuantity || 0}</td>
                 <td className="mobile">
                   <strike>N</strike>
-                  {item.price}
+                  {item.price ? item.price.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "0.00"}
                 </td>
                 <td className="mobile">
-                  <strike>N</strike> {item.priceTag.toLocaleString(undefined, {maximumFractionDigits:2})}
+                  <strike>N</strike>
+                  {item.priceTag ? item.priceTag.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "0.00"}
                 </td>
                 {activePage === "Restock" && (
                   <td>
                     <button onClick={() => handleEditItem(item)}>
                       <i className="fas fa-edit"></i>
                     </button>
-                    <button style={activePage === "Restock" ? {display:'none'} : {display:'block'} } onClick={() => handleDelete(item._id)}>
+                    <button onClick={() => handleDelete(item._id)}>
                       <i className="fas fa-trash"></i>
                     </button>
                   </td>

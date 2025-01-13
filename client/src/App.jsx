@@ -11,13 +11,20 @@ const App = () => {
   const { sendJsonMessage } = useWebSocket("wss://inentory-app.vercel.app/ws", {
     onMessage: (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === "inventory_update") {
+      if (data.type === "inventory_update" || data.type === "inventory_add") {
         updateInventoryState(data.item);
       }
     },
   });
 
   useEffect(() => {
+    const storedPage = localStorage.getItem("activePage");
+    if (storedPage) {
+      setActivePage(storedPage); // Restore active page from localStorage
+    } else {
+      setActivePage("Dashboard"); // Default to Dashboard if no stored page
+    }
+
     fetchInventory();
   }, []);
 
@@ -72,7 +79,7 @@ const App = () => {
 
       if (response.ok) {
         const updatedItem = await response.json();
-        sendJsonMessage({ type: "inventory_update", item: updatedItem });
+        sendJsonMessage({ type: item.id ? "inventory_update" : "inventory_add", item: updatedItem });
       } else {
         console.error(`Failed to ${item.id ? "update" : "add"} item:`, response.statusText);
       }
@@ -103,6 +110,11 @@ const App = () => {
     setActivePage("Restock");
   };
 
+  const handleActivePageChange = (newPage) => {
+    setActivePage(newPage);
+    localStorage.setItem("activePage", newPage); // Store active page
+  };
+
   const renderPage = () => {
     switch (activePage) {
       case "Dashboard":
@@ -131,7 +143,7 @@ const App = () => {
 
   return (
     <div className="grid">
-      <Nav setActivePage={setActivePage} />
+      <Nav setActivePage={handleActivePageChange} />
       <div>{renderPage()}</div>
     </div>
   );
