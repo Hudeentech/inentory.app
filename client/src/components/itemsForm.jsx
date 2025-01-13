@@ -159,7 +159,7 @@ const ItemForm = () => {
     }
 
     resetForm(); // Reset form fields
-    
+    window.location.reload(); // Reload the page to update the inventory
   };
 
   // Reset the form to initial state

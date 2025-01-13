@@ -1,9 +1,49 @@
 import React, { useEffect, useState } from "react";
+import useWebSocket from "react-use-websocket";
 import Header from "./header";
 
 const InventoryPage = ({ inventory, handleEditItem, handleDelete, activePage }) => {
   const [localInventory, setLocalInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
+  const socketUrl = `wss://ws.inentory-app.vercel.app/inventory`;
+
+  const { lastJsonMessage } = useWebSocket(socketUrl, {
+    onOpen: () => console.log("WebSocket Connected"),
+    onClose: () => console.log("WebSocket Disconnected"),
+    onError: (error) => console.error("WebSocket Error:", error),
+    shouldReconnect: () => true,
+    reconnectAttempts: 5,
+    reconnectInterval: 2000
+  });
+
+  // Handle WebSocket messages
+  useEffect(() => {
+    if (lastJsonMessage) {
+      try {
+        const { type, item } = lastJsonMessage;
+        if ((type === "inventory_update" || type === "inventory_add") && item) {
+          setLocalInventory(prev => {
+            const updated = [...prev];
+            const index = updated.findIndex(existing => existing._id === item._id);
+            
+            if (index !== -1) {
+              updated[index] = { ...updated[index], ...item };
+            } else {
+              updated.push(item);
+            }
+            
+            return updated;
+          });
+        } else if (type === "inventory_delete" && item) {
+          setLocalInventory(prev => 
+            prev.filter(existing => existing._id !== item._id)
+          );
+        }
+      } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+      }
+    }
+  }, [lastJsonMessage]);
 
   // Initialize and sync inventory from props
   useEffect(() => {
@@ -18,34 +58,12 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete, activePage }) 
     setFilteredInventory(localInventory);
   }, [localInventory]);
 
-  // Handle search functionality
   const handleSearch = (query) => {
     const lowerCaseQuery = query.toLowerCase();
     const filtered = localInventory.filter((item) =>
       item.name.toLowerCase().includes(lowerCaseQuery)
     );
     setFilteredInventory(filtered);
-  };
-
-  // Handle item addition
-  const handleAddItem = (newItem) => {
-    setLocalInventory((prevInventory) => [...prevInventory, newItem]);
-  };
-
-  // Handle item edit
-  const handleUpdateItem = (updatedItem) => {
-    setLocalInventory((prevInventory) => 
-      prevInventory.map((item) =>
-        item._id === updatedItem._id ? { ...item, ...updatedItem } : item
-      )
-    );
-  };
-
-  // Handle item deletion
-  const handleDeleteItem = (itemId) => {
-    setLocalInventory((prevInventory) => 
-      prevInventory.filter((item) => item._id !== itemId)
-    );
   };
 
   return (
@@ -75,22 +93,18 @@ const InventoryPage = ({ inventory, handleEditItem, handleDelete, activePage }) 
                 <td>{item.stockQuantity || 0}</td>
                 <td className="mobile">
                   <strike>N</strike>
-                  {item.price
-                    ? item.price.toLocaleString(undefined, { maximumFractionDigits: 2 })
-                    : "0.00"}
+                  {item.price ? item.price.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "0.00"}
                 </td>
                 <td className="mobile">
                   <strike>N</strike>
-                  {item.priceTag
-                    ? item.priceTag.toLocaleString(undefined, { maximumFractionDigits: 2 })
-                    : "0.00"}
+                  {item.priceTag ? item.priceTag.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "0.00"}
                 </td>
                 {activePage === "Restock" && (
                   <td>
                     <button onClick={() => handleEditItem(item)}>
                       <i className="fas fa-edit"></i>
                     </button>
-                    <button onClick={() => handleDeleteItem(item._id)}>
+                    <button onClick={() => handleDelete(item._id)}>
                       <i className="fas fa-trash"></i>
                     </button>
                   </td>

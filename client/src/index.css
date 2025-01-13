@@ -875,6 +875,13 @@ form button {
   width: 100%;
 }
 
+@media (max-width:668px) {
+  .store-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+}
+
 /* Card Styling */
 .store-card {
   background: #1c1c1c;
