@@ -14,7 +14,7 @@ const SalesForm = () => {
 
   const BASE_URL = "https://inentory-app.vercel.app";
 
-  // Fetch inventory
+  // Fetch inventory from the API
   const fetchInventory = async () => {
     setLoading(true);
     try {
@@ -43,9 +43,9 @@ const SalesForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const item = inventory.find(
-      (item) => item.name.toLowerCase() === salesData.itemSold.toLowerCase()
+        (item) => item.name.toLowerCase() === salesData.itemSold.toLowerCase()
     );
 
     if (!item) {
@@ -54,12 +54,11 @@ const SalesForm = () => {
       return;
     }
 
-    const soldAmount = parseInt(salesData.amountSold);
+    const soldAmount = parseInt(salesData.amountSold, 10);
     const priceSold = parseFloat(salesData.priceSold);
 
     if (soldAmount <= 0 || priceSold <= 0) {
       toast.warning("Amount and price must be positive values.");
-    
       return;
     }
 
@@ -89,11 +88,11 @@ const SalesForm = () => {
         const errorData = await response.json();
         toast.error(errorData.error || "Error recording sale.");
       } else {
-        // Trigger inventory refresh
+        // Refresh the inventory list after a successful sale
         await fetchInventory();
 
         toast.success(
-          `Sale successful: ${salesData.amountSold} of "${salesData.itemSold}" sold at NG ${salesData.priceSold} each.`
+            `Sale successful: ${salesData.amountSold} of "${salesData.itemSold}" sold at NG ${salesData.priceSold} each.`
         );
       }
     } catch (error) {
@@ -107,8 +106,9 @@ const SalesForm = () => {
     resetForm();
   };
 
+  // Corrected resetForm to update salesData instead of non-existent formData
   const resetForm = () => {
-    setFormData({
+    setSalesData({
       itemSold: "",
       amountSold: "",
       priceSold: "",
@@ -116,63 +116,63 @@ const SalesForm = () => {
   };
 
   return (
-    <div className="form-section">
-      <form className="form-group" id="salesForm" onSubmit={handleSubmit}>
-     <h1>   Record Sales</h1>
-        <div className="fields">
-          <div>
-            <p className="label">Item Name</p>
-            <input
-              type="text"
-              id="itemSold"
-              value={salesData.itemSold}
-              onChange={handleChange}
-              placeholder="Enter the item sold"
-              required
-            />
+      <div className="form-section">
+        <form className="form-group" id="salesForm" onSubmit={handleSubmit}>
+          <h1>Record Sales</h1>
+          <div className="fields">
+            <div>
+              <p className="label">Item Name</p>
+              <input
+                  type="text"
+                  id="itemSold"
+                  value={salesData.itemSold}
+                  onChange={handleChange}
+                  placeholder="Enter the item sold"
+                  required
+              />
+            </div>
+
+            <div>
+              <p className="label">Quantity Sold</p>
+              <input
+                  type="number"
+                  id="amountSold"
+                  value={salesData.amountSold}
+                  onChange={handleChange}
+                  placeholder="Enter the amount sold"
+                  required
+              />
+            </div>
+
+            <div>
+              <p className="label">Selling Price</p>
+              <input
+                  type="number"
+                  step="0.01"
+                  id="priceSold"
+                  value={salesData.priceSold}
+                  onChange={handleChange}
+                  placeholder="Enter the price sold per unit"
+                  required
+              />
+            </div>
           </div>
 
           <div>
-            <p className="label">Quantity Sold</p>
-            <input
-              type="number"
-              id="amountSold"
-              value={salesData.amountSold}
-              onChange={handleChange}
-              placeholder="Enter the amount sold"
-              required
-            />
+            <button className="btn" type="submit" disabled={loading}>
+              {loading ? (
+                  <i className="fa-solid fa-spinner fa-spin"></i>
+              ) : (
+                  <i className="fa-solid fa-check"></i>
+              )}
+              <p>{loading ? "Processing..." : "Submit Sale"}</p>
+            </button>
           </div>
+        </form>
 
-          <div>
-            <p className="label">Selling Price</p>
-            <input
-              type="number"
-              step="0.01"
-              id="priceSold"
-              value={salesData.priceSold}
-              onChange={handleChange}
-              placeholder="Enter the price sold per unit"
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <button className="btn" type="submit" disabled={loading}>
-            {loading ? (
-              <i className="fa-solid fa-spinner fa-spin"></i>
-            ) : (
-              <i className="fa-solid fa-check"></i>
-            )}
-            <p>{loading ? "Processing..." : "Submit Sale"}</p>
-          </button>
-        </div>
-      </form>
-
-      <ToastContainer  theme="dark"/>
-      <InventoryPage inventory={inventory} hideActions={true} />
-    </div>
+        <ToastContainer theme="dark" />
+        <InventoryPage inventory={inventory} hideActions={true} />
+      </div>
   );
 };
 
